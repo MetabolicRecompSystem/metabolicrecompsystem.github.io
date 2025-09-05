@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calcolatore TDEE – Metabolic Recomp System</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+    fieldset { margin-bottom: 1rem; }
+    label { display: block; margin-top: 0.5rem; }
+    input, select { width: 100%; padding: 0.5rem; margin-top: 0.3rem; }
+    button { padding: 0.7rem 1.5rem; margin-top: 1rem; background: #004C6D; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #003a52; }
+    .output { margin-top: 1.5rem; padding: 1rem; background: #f5f7f9; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Calcolatore TDEE</h1>
+  <form id="tdeeForm">
+    <fieldset>
+      <label>Peso (kg): <input type="number" id="weight" min="30" max="200" required /></label>
+      <label>Tipo di lavoro:
+        <select id="workLevel">
+          <option value="0">Sedentario (0)</option>
+          <option value="1">Parzialmente attivo (1)</option>
+          <option value="2">Molto attivo (2)</option>
+        </select>
+      </label>
+      <label>Passi / giorno:
+        <select id="stepsLevel">
+          <option value="0">&lt; 3000 (0)</option>
+          <option value="1">3000–8999 (1)</option>
+          <option value="2">≥9000 (2)</option>
+        </select>
+      </label>
+      <label>Allenamenti / settimana:
+        <select id="workoutsLevel">
+          <option value="0">0–1 (0)</option>
+          <option value="1">2–3 (1)</option>
+          <option value="2">4–6 (2)</option>
+        </select>
+      </label>
+      <button type="button" onclick="calculateTDEE()">Calcola TDEE</button>
+    </fieldset>
+  </form>
+  <div id="result" class="output"></div>
+
+  <script>
+    function calculateTDEE() {
+      const weight = parseFloat(document.getElementById("weight").value);
+      const w = parseInt(document.getElementById("workLevel").value);
+      const s = parseInt(document.getElementById("stepsLevel").value);
+      const a = parseInt(document.getElementById("workoutsLevel").value);
+      const score = w + s + a;
+      let multiplier = 25;
+      if (score <= 1) multiplier = 26;
+      else if (score <= 3) multiplier = 28;
+      else if (score <= 5) multiplier = 30;
+      else multiplier = 31;
+      const tdee = Math.round(weight * multiplier);
+      const prot = Math.round(weight * 1.8);
+      const fat = Math.round(weight * 1);
+      const kcalProt = prot * 4;
+      const kcalFat = fat * 9;
+      const carbs = Math.round((tdee - (kcalProt + kcalFat)) / 4);
+      document.getElementById("result").innerHTML = `
+        <h2>Risultati</h2>
+        <p><strong>TDEE stimato</strong>: ${tdee} kcal/giorno</p>
+        <p><strong>Macro consigliati giornalieri:</strong><br>
+        Proteine: ${prot} g · Grassi: ${fat} g · Carboidrati: ${carbs} g</p>`;
+    }
+  </script>
+</body>
+</html>
